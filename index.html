@@ -1,1 +1,199 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Number Rush</title>
 
+<style>
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#0D47A1;
+  color:white;
+  text-align:center;
+  padding:16px;
+}
+
+h1{
+  font-size:42px;
+  margin:12px 0;
+}
+
+.instructions{
+  background:white;
+  color:#111;
+  padding:16px;
+  border-radius:18px;
+  border:4px solid #111;
+  font-size:18px;
+  line-height:1.6;
+  max-width:700px;
+  margin:0 auto 14px;
+}
+
+.timer{
+  font-size:58px;
+  font-weight:bold;
+  margin:10px 0;
+  color:#FFD400;
+}
+
+button{
+  font-size:22px;
+  font-weight:bold;
+  padding:14px 24px;
+  border:none;
+  border-radius:14px;
+  margin:8px;
+  cursor:pointer;
+}
+
+.startBtn{
+  background:#FFD400;
+  color:#111;
+}
+
+.checkBtn{
+  background:#4CAF50;
+  color:white;
+}
+
+.board{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:8px;
+  max-width:360px;
+  margin:16px auto;
+  background:white;
+  padding:12px;
+  border-radius:22px;
+  border:5px solid #111;
+}
+
+.num{
+  background:#fff;
+  color:#111;
+  border:3px solid #0D47A1;
+  border-radius:12px;
+  font-size:30px;
+  font-weight:bold;
+  padding:12px 4px;
+}
+
+.hidden{
+  display:none;
+}
+
+.message{
+  background:white;
+  color:#111;
+  padding:20px;
+  border-radius:18px;
+  border:4px solid #111;
+  font-size:24px;
+  font-weight:bold;
+  max-width:600px;
+  margin:18px auto;
+}
+
+@media(max-width:600px){
+  h1{font-size:32px;}
+  .instructions{font-size:16px;}
+  .timer{font-size:48px;}
+  .num{font-size:26px;padding:10px 2px;}
+  .board{max-width:330px;}
+  button{width:90%;font-size:20px;}
+}
+</style>
+</head>
+
+<body>
+
+<h1>🔢 Number Rush</h1>
+
+<div class="instructions">
+  נציג מכל קבוצה סורק את הברקוד.<br>
+  על המסך יופיעו <b>21 מספרים רנדומליים</b> בין 11 ל־99 למשך <b>10 שניות בלבד</b>.<br>
+  כשהמספרים נעלמים — כתבו על הדף את כל מה שזכרתם.<br><br>
+  לאחר מכן לחצו על <b>בדיקה</b> כדי לראות שוב את הלוח ולבדוק מי העתיק הכי מדויק.
+</div>
+
+<div class="timer" id="timer">10</div>
+
+<button class="startBtn" id="startBtn" onclick="startMission()">▶ התחל משימה</button>
+<button class="checkBtn hidden" id="checkBtn" onclick="showCheck()">✅ הצג לבדיקה</button>
+
+<div class="board hidden" id="board"></div>
+
+<div class="message hidden" id="message">
+  ⛔ הזמן נגמר!<br>
+  כתבו עכשיו את המספרים שזכרתם.
+</div>
+
+<script>
+let numbers = [];
+let countdown = null;
+
+function generateNumbers(){
+  const set = new Set();
+
+  while(set.size < 21){
+    const num = Math.floor(Math.random() * 89) + 11;
+    set.add(num);
+  }
+
+  numbers = Array.from(set);
+}
+
+function renderBoard(){
+  const board = document.getElementById("board");
+  board.innerHTML = "";
+
+  numbers.forEach(num => {
+    const div = document.createElement("div");
+    div.className = "num";
+    div.innerText = num;
+    board.appendChild(div);
+  });
+}
+
+function startMission(){
+  clearInterval(countdown);
+
+  generateNumbers();
+  renderBoard();
+
+  let time = 10;
+
+  document.getElementById("timer").innerHTML = time;
+  document.getElementById("board").classList.remove("hidden");
+  document.getElementById("message").classList.add("hidden");
+  document.getElementById("checkBtn").classList.add("hidden");
+  document.getElementById("startBtn").classList.add("hidden");
+
+  countdown = setInterval(function(){
+    time--;
+    document.getElementById("timer").innerHTML = time;
+
+    if(time <= 0){
+      clearInterval(countdown);
+
+      document.getElementById("board").classList.add("hidden");
+      document.getElementById("message").classList.remove("hidden");
+      document.getElementById("checkBtn").classList.remove("hidden");
+      document.getElementById("timer").innerHTML = "0";
+    }
+  },1000);
+}
+
+function showCheck(){
+  document.getElementById("board").classList.remove("hidden");
+  document.getElementById("message").classList.add("hidden");
+  document.getElementById("checkBtn").classList.add("hidden");
+  document.getElementById("timer").innerHTML = "בדיקה";
+}
+</script>
+
+</body>
+</html>
